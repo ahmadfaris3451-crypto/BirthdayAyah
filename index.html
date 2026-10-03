@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Hari Jadi!</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Patrick Hand for the scrapbook aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Patrick Hand', cursive;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        /* Background petak biru kotak-kotak macam dalam gambar */
+        .bg-checkerboard {
+            background-color: #ffffff;
+            background-image: 
+                linear-gradient(45deg, #e3f0ff 25%, transparent 25%, transparent 75%, #e3f0ff 75%, #e3f0ff),
+                linear-gradient(45deg, #e3f0ff 25%, transparent 25%, transparent 75%, #e3f0ff 75%, #e3f0ff);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            min-height: 100vh; 
+        }
+
+        /* Washi tape */
+        .tape {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 25px;
+            opacity: 0.8;
+            z-index: 10;
+        }
+        .tape-blue { background-color: #c4def6; }
+        .tape-pink { background-color: #f8c8e1; }
+        .tape-yellow { background-color: #fbe095; }
+
+        /* Polaroid style (Untuk skrin gambar) */
+        .polaroid {
+            background: white;
+            padding: 10px 10px 40px 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            position: relative;
+        }
+
+        /* Card Style (Menu Utama - Dashed borders) */
+        .card {
+            background: white;
+            width: 160px;
+            height: 160px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .card:hover { transform: scale(1.05); }
+        .card-pink { border: 2px dashed #f49fcc; transform: rotate(-3deg); }
+        .card-blue { border: 2px dashed #93c5fd; transform: rotate(1deg); }
+        .card-green { border: 2px dashed #86efac; transform: rotate(2deg); }
+
+        .card-text { font-size: 1.5rem; color: #333; margin-top: 15px; font-weight: bold; }
+        .icon-container { width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; font-size: 3rem; }
+        .icon-img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* Title Box (Menu Utama) */
+        .title-box {
+            background: white;
+            border: 2px solid #b3d4f0;
+            border-radius: 8px;
+            padding: 5px 20px;
+            position: relative;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .title-text { color: #1a4fa3; font-size: 2rem; font-weight: bold; }
+
+        /* Animasi Buka Postcard / Surat */
+        @keyframes openPostcard {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.2) rotate(5deg); opacity: 0.7; }
+            100% { transform: scale(0) rotate(-10deg); opacity: 0; }
+        }
+        .animate-open { animation: openPostcard 0.6s ease-in-out forwards; }
+
+        /* Animations */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop-in { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        /* Screen transitions */
+        .screen {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            min-height: 100vh;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .screen.active {
+            display: flex;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-checkerboard text-gray-800">
+
+    <!-- SCREEN 1: INTRO (GIFT BOX) -->
+    <div id="screen-intro" class="screen active flex-col items-center justify-center p-4">
+        <div class="bg-white/90 px-8 py-4 rounded-xl shadow-lg border-4 border-blue-300 transform rotate-[-2deg] mb-12 relative animate-pop-in">
+            <div class="tape tape-pink top-[-15px] left-1/4" style="transform: rotate(-2deg);"></div>
+            <h1 class="text-4xl md:text-6xl text-blue-800 tracking-wide font-bold text-center">Selamat Hari Jadi! 🎉</h1>
+        </div>
+
+        <div onclick="navigateTo('screen-main-menu')" class="cursor-pointer group relative mt-4 flex flex-col items-center">
+            <!-- Ikon Hadiah: Disengetkan dan dicenter -->
+            <div class="text-9xl transform -rotate-6 transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-4 group-hover:rotate-3 animate-float shadow-2xl rounded-full bg-white/60 w-48 h-48 flex items-center justify-center border-4 border-dashed border-pink-300">
+                🎁
+            </div>
+            <p class="text-2xl text-center mt-8 text-gray-700 bg-white/90 inline-block px-6 py-2 rounded-full shadow-md border-2 border-dashed border-gray-300 transform rotate-[1deg]">
+                Klik untuk buka... 👆
+            </p>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: MAIN MENU -->
+    <div id="screen-main-menu" class="screen flex-col items-center justify-center p-4">
+        
+        <div class="title-box">
+            <div class="tape tape-blue" style="transform: translateX(-50%) rotate(-2deg); top: -10px;"></div>
+            <span class="title-text">Pilih satu!</span>
+            <span style="font-size: 1.5rem;">👇</span>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-6 max-w-4xl w-full">
+            <!-- Gambar -->
+            <div onclick="navigateTo('screen-gambar')" class="card card-pink">
+                <div class="tape tape-pink"></div>
+                <div class="icon-container">
+                    <img src="ikon-gambar.png" alt="🖼" class="icon-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span style="display: none;">🖼️</span>
+                </div>
+                <div class="card-text">Gambar</div>
+            </div>
+
+            <!-- Lagu -->
+            <div onclick="navigateTo('screen-lagu')" class="card card-blue" style="z-index: 5;">
+                <div class="tape tape-blue" style="transform: translateX(-50%) rotate(1deg);"></div>
+                <div class="icon-container">
+                    <img src="ikon-lagu.png" alt="🎵" class="icon-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span style="display: none;">🎵</span>
+                </div>
+                <div class="card-text">Lagu</div>
+            </div>
+
+            <!-- Ucapan (Postcard) -->
+            <div onclick="navigateTo('screen-postcard')" class="card card-green" style="z-index: 10;">
+                <div class="tape tape-yellow" style="transform: translateX(-50%) rotate(-1deg);"></div>
+                <div class="icon-container">
+                    <span>💌</span>
+                </div>
+                <div class="card-text">Ucapan</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCREEN 3A: GAMBAR (3 Photos) -->
+    <div id="screen-gambar" class="screen flex-col items-center justify-center p-6 md:p-12 overflow-y-auto">
+        <div class="bg-white px-8 py-2 rounded-xl shadow-md border-2 border-pink-300 transform rotate-[-2deg] mb-8 inline-block relative mt-4">
+            <h2 class="text-4xl text-pink-600 font-bold">Memori 📸</h2>
+        </div>
+        
+        <div class="flex flex-wrap justify-center gap-8 max-w-5xl mb-12">
+            <!-- Photo 1 -->
+            <div class="polaroid transform rotate-[-4deg] hover:rotate-0 hover:scale-105 transition-all w-64 md:w-72">
+                <div class="tape tape-pink"></div>
+                <img src="gambar1.jpeg" alt="Gambar 1" class="w-full h-auto rounded-sm">
+                <p class="text-center text-xl mt-4 text-gray-600 font-bold">Kenangan manis ✨</p>
+            </div>
+            <!-- Photo 2 -->
+            <div class="polaroid transform rotate-[3deg] hover:rotate-0 hover:scale-105 transition-all w-64 md:w-72 mt-4 md:mt-0">
+                <div class="tape tape-blue"></div>
+                <img src="gambar2.jpeg" alt="Gambar 2" class="w-full h-auto rounded-sm">
+                <p class="text-center text-xl mt-4 text-gray-600 font-bold">Hari bermakna 💖</p>
+            </div>
+            <!-- Photo 3 -->
+            <div class="polaroid transform rotate-[-2deg] hover:rotate-0 hover:scale-105 transition-all w-64 md:w-72 mt-4 md:mt-0">
+                <div class="tape tape-yellow"></div>
+                <img src="gambar3.jpeg" alt="Gambar 3" class="w-full h-auto rounded-sm">
+                <p class="text-center text-xl mt-4 text-gray-600 font-bold">Selalu bersama 🥰</p>
+            </div>
+        </div>
+
+        <button onclick="navigateTo('screen-main-menu')" class="bg-white text-gray-800 px-8 py-2 rounded-full font-bold text-2xl hover:bg-gray-100 hover:scale-105 transition-all border-2 border-gray-300 shadow-md">
+            ⬅️ Kembali
+        </button>
+    </div>
+
+    <!-- SCREEN 3B: LAGU (Video Sendiri) -->
+    <div id="screen-lagu" class="screen flex-col items-center justify-center p-6 md:p-12">
+        <div class="bg-white px-8 py-2 rounded-xl shadow-md border-2 border-blue-300 transform rotate-[1deg] mb-8 inline-block relative">
+            <div class="tape tape-blue"></div>
+            <h2 class="text-4xl text-blue-600 font-bold">Lagu 🎶</h2>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl shadow-xl border-2 border-dashed border-gray-300 mb-8 w-full max-w-2xl transform rotate-[-1deg]">
+            <!-- Paparan Video MP4 -->
+            <video class="w-full h-auto rounded-lg shadow-md" controls>
+                <source src="lagu-hari-jadi.mp4" type="video/mp4">
+                Pelayar anda tidak menyokong paparan video.
+            </video>
+        </div>
+
+        <button onclick="navigateTo('screen-main-menu')" class="bg-white text-gray-800 px-8 py-2 rounded-full font-bold text-2xl hover:bg-gray-100 hover:scale-105 transition-all border-2 border-gray-300 shadow-md">
+            ⬅️ Kembali
+        </button>
+    </div>
+
+    <!-- SCREEN 4: POSTCARD ANIMATION SCREEN -->
+    <div id="screen-postcard" class="screen flex-col items-center justify-center p-4">
+        <div class="bg-white px-8 py-3 rounded-lg border border-green-300 shadow-sm mb-8 relative">
+            <div class="tape tape-yellow"></div>
+            <h2 class="text-3xl text-green-700 font-bold tracking-wide text-center">Tekan postcard untuk buka surat! 💌</h2>
+        </div>
+
+        <!-- Postcard Interaktif dengan Emoji -->
+        <div id="postcard-box" onclick="openPostcard()" class="cursor-pointer bg-white w-80 h-52 rounded-xl shadow-2xl border-4 border-dashed border-pink-300 transform hover:scale-105 transition-all flex flex-col items-center justify-center relative p-6">
+            <div class="tape tape-pink top-[-10px]"></div>
+            <div class="text-7xl mb-2">💌</div>
+            <p class="text-xl font-bold text-gray-700 text-center">Postcard Khas</p>
+            <p class="text-sm text-gray-400 mt-1">(Klik untuk buka)</p>
+        </div>
+
+        <button onclick="navigateTo('screen-main-menu')" class="mt-12 bg-white text-gray-800 px-6 py-2 rounded-full font-bold text-xl hover:bg-gray-200 hover:scale-105 transition-all border border-gray-300 shadow-sm">
+            ⬅️ Kembali
+        </button>
+    </div>
+
+    <!-- SCREEN 5: MESSAGES MENU (Ibu, Faris, Faiz) -->
+    <div id="screen-messages-menu" class="screen flex-col items-center justify-center p-4 md:p-8">
+        
+        <!-- Tajuk -->
+        <div class="mb-12 relative flex justify-center">
+            <div class="tape tape-pink absolute z-10" style="top: -12px;"></div>
+            <div class="bg-white px-8 py-3 rounded-lg border border-purple-300 shadow-sm relative z-0">
+                <h2 class="text-3xl text-purple-700 font-bold tracking-wide">Ucapan Dari Hati 💌</h2>
+            </div>
+        </div>
+
+        <!-- Butang Pilihan (Ibu, Faris, Faiz) -->
+        <main class="flex flex-col md:flex-row gap-6 justify-center w-full max-w-4xl">
+            <!-- Ibu -->
+            <button onclick="openMessage('ibu')" class="bg-white border-2 border-dashed border-pink-400 rounded-lg py-4 px-10 shadow-sm hover:scale-105 transition-transform transform -rotate-1 text-2xl font-bold text-gray-800 w-full md:w-52">
+                🌸 Ibu
+            </button>
+
+            <!-- Faris -->
+            <button onclick="openMessage('faris')" class="bg-white border-2 border-dashed border-blue-400 rounded-lg py-4 px-10 shadow-sm hover:scale-105 transition-transform text-2xl font-bold text-gray-800 w-full md:w-52">
+                👦 Faris
+            </button>
+            
+            <!-- Faiz -->
+            <button onclick="openMessage('faiz')" class="bg-white border-2 border-dashed border-green-400 rounded-lg py-4 px-10 shadow-sm hover:scale-105 transition-transform transform rotate-1 text-2xl font-bold text-gray-800 w-full md:w-52">
+                👦 Faiz
+            </button>
+        </main>
+        
+        <!-- Butang Kembali -->
+        <button onclick="navigateTo('screen-postcard')" class="mt-16 bg-white text-gray-800 px-6 py-2 rounded-full font-bold text-xl hover:bg-gray-200 hover:scale-105 transition-all border border-gray-300 shadow-sm">
+            ⬅️ Tutup Postcard
+        </button>
+    </div>
+
+    <!-- SCREEN 6: MESSAGE DETAIL -->
+    <div id="screen-message-detail" class="screen flex-col items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl relative p-8 border-4 border-blue-200">
+            <!-- Scrapphoto corners -->
+            <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-300 rounded-tl-xl m-2"></div>
+            <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-300 rounded-tr-xl m-2"></div>
+            <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-blue-300 rounded-bl-xl m-2"></div>
+            <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-300 rounded-br-xl m-2"></div>
+            
+            <div class="tape tape-blue top-[-15px] left-1/2"></div>
+
+            <div class="text-center mt-6">
+                <h3 id="detail-title" class="text-4xl font-bold text-gray-800 mb-6 border-b-2 border-dashed border-gray-300 pb-2 inline-block">
+                    <!-- Title injected -->
+                </h3>
+                
+                <div class="bg-orange-50 p-6 rounded-lg shadow-inner transform rotate-[1deg] mb-8 max-h-[60vh] overflow-y-auto">
+                    <p id="detail-content" class="text-xl md:text-2xl text-gray-800 leading-relaxed whitespace-pre-wrap text-left font-semibold">
+                        <!-- Content injected -->
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex justify-center">
+                <button onclick="navigateTo('screen-messages-menu')" class="bg-blue-100 text-blue-800 px-8 py-2 rounded-full font-bold text-2xl hover:bg-blue-200 hover:scale-105 transition-all border-2 border-blue-300 shadow-sm flex items-center gap-2 transform rotate-[-1deg]">
+                    ⬅️ Kembali
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Store current screen to handle transitions smoothly
+        let currentScreenId = 'screen-intro';
+        
+        // Navigation function
+        function navigateTo(targetScreenId) {
+            const currentScreen = document.getElementById(currentScreenId);
+            const targetScreen = document.getElementById(targetScreenId);
+            
+            // Kalau balik ke skrin postcard, reset saiz postcard
+            if (targetScreenId === 'screen-postcard') {
+                const postcard = document.getElementById('postcard-box');
+                postcard.classList.remove('animate-open');
+                postcard.style.opacity = '1';
+                postcard.style.transform = 'scale(1) rotate(0deg)';
+            }
+
+            // Fade out current
+            currentScreen.style.opacity = '0';
+            
+            setTimeout(() => {
+                currentScreen.classList.remove('active');
+                targetScreen.classList.add('active');
+                
+                // Force reflow
+                void targetScreen.offsetWidth;
+                
+                // Fade in new
+                targetScreen.style.opacity = '1';
+                currentScreenId = targetScreenId;
+            }, 300);
+        }
+
+        // Fungsi animasi buka postcard terus ke senarai ucapan
+        function openPostcard() {
+            const postcard = document.getElementById('postcard-box');
+            postcard.classList.add('animate-open');
+
+            // Selepas animasi selesai (0.5 saat), terus tukar ke skrin ucapan
+            setTimeout(() => {
+                navigateTo('screen-messages-menu');
+            }, 500);
+        }
+
+        // --- MESSAGE DATA & LOGIC ---
+        const messageData = {
+            ibu: {
+                title: "Dari Ibu 🌸",
+                content: `Untuk Suamiku Tercinta ❤️
+
+Selamat Hari Jadi Ke-45, Sayang.
+
+22 tahun kita bersama. 22 tahun yang penuh dengan suka duka, tawa dan tangis. Dari kita berdua, kini Allah hadiahkan kita 3 orang cahaya mata, 2 putera dan 1 puteri yang menjadi kebanggaan kita bersama.
+
+Terima kasih B kerana menjadi suami yang bertanggungjawab. Yang tak pernah mengeluh mencari rezeki untuk kami. Yang hujan panas, penat lelah B harungi demi memastikan isteri dan anak-anak cukup makan, cukup pakai dan sentiasa terlindung.
+
+Terima kasih kerana menjadi ayah yang hebat untuk 3 anak kita. Walaupun B penat kerja, B tetap cuba menjadi ayah yang penyayang buat mereka.
+
+Mungkin sayang ini cuma seorang suri rumah biasa. Tak punya gaji, tak punya pangkat besar.
+
+Di usia 45 tahun ini, sayang tak minta banyak.
+
+Sayang cuma doa semoga Allah panjangkan umur B, sihatkan tubuh badan B, luaskan rezeki B seluas lautan, permudahkan setiap urusan B, dan tenangkan hati B dari segala beban kerja.
+
+Semoga Allah balas setiap titis peluh B dengan pahala yang berlipat ganda. Semoga setiap lelah B mencari nafkah untuk kami menjadi asbab untuk B masuk syurga tanpa hisab.
+
+Selamat Hari Jadi, Imamku, Kekasihku, Syurgaku.
+
+Terima kasih kerana masih setia memegang tangan sayang setelah 22 tahun. Jangan lepaskan ya, B. Kita teruskan perjalanan ini sampai ke syurga, bersama 3 anak kita.
+
+Sayang B, dunia dan akhirat.
+
+*_Daripada,
+Isteri B yang sentiasa setia,
+Suri rumah tangga yang paling bahagia kerana memiliki B_* 🎂❤️`
+            },
+            faris: {
+                title: "Dari Abang (Faris) 👦",
+                content: `Selamat hari lahir, Ayah. Abang doakan ayah sentiasa sihat, dipanjangkan umur, dimurahkan rezeki, dan sentiasa dalam rahmat Allah SWT.
+
+Terima kasih atas segala pengorbanan, kasih sayang, dan penat lelah ayah membesarkan kami selama ni. Abang mungkin jarang meluah, tapi dalam hati, abang sangat hargai setiap titik peluh dan doa ayah untuk keluarga kita.
+
+Abang sayang ayah.`
+            },
+            faiz: {
+                title: "Dari Faiz 👦",
+                content: `Happy birthday Ayah! iz bersyukur sangat dapat ayah macam ayah. Terima kasih sebab tak pernah jemu kerja keras untuk keluarga. iz tak pandai sangat nak buat ayat berbunga-bunga, tapi iz nak ayah tahu yang Faiz akan belajar rajin-rajin dan usaha lebih lagi lepas ni khas untuk ayah tersayang. Semoga Allah sentiasa lindung ayah, bagi kesihatan yang baik dan panjang umur supaya dapat tengok iz berjaya nanti. Sayang ayah!`
+            }
+        };
+
+        function openMessage(person) {
+            const data = messageData[person];
+            if (data) {
+                document.getElementById('detail-title').innerText = data.title;
+                document.getElementById('detail-content').innerText = data.content;
+                navigateTo('screen-message-detail');
+            }
+        }
+    </script>
+</body>
+</html>
